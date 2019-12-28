@@ -30,6 +30,6 @@ void response_file(int, const char*);
 
 void initialize_server(); 
 
-int get_request_line(int, char*, int); 
+int get_request_line(int, char*); 
 
 void execute_cgi(int, const char *,const char *,const char *); 

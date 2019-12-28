@@ -1,7 +1,11 @@
- void initialize_server(){
+#include "header.h" 
+
+
+
+//用于初始化web服务器 
+void initialize_server(){
 	int listenfd;
 	struct sockaddr_in listen_addr;
-	char buffer[1024];
 
 	listenfd = socket(PF_INET, SOCK_STREAM, 0);
 	if(listenfd < 0){
@@ -19,5 +23,29 @@
 	}
 
 	listen(listenfd, 5);
+}
+
+//用于获取请求的一行 
+int get_request_line(int sock, char* buf){
+	int buf_size = sizeof(buf);
+	char ch = '\0';
+	for(int i = 0; i < buf_size && ch != '\n'; i++){
+		n = recv(sock, &ch, 1, 0);
+		if(n > 0){
+			if(c == '\r'){
+				n = recv(sock, &ch, 1, MSG_PEEK);
+                if ((n > 0) && (ch == '\n')) recv(sock, &ch, 1, 0);
+				else ch = '\n';
+				buf[i] = ch;
+			}
+		}
+		else c = '\n';
+	} 
+	buf[i] = '\0';
+    return(i);
+}
+
+int main(void){
+	
 }
 
