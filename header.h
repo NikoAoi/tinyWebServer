@@ -18,7 +18,6 @@
 #define CGI_ERROR 2
 #define REQUEST_ERROR 3
 #define REQUEST_METHOD_ERROR 4
-#define LISTEN_PORT 8089 
 
 #define SERVER_INFO "Server: tiny_web_server/1.1.0\r\n"
 
@@ -28,7 +27,7 @@ void error_handler(int);
 
 void response_file(int, const char*); 
 
-void initialize_server(); 
+void initialize_server(u_short *); 
 
 int get_request_line(int, char*, int); 
 
