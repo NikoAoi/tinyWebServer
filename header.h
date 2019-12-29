@@ -33,7 +33,7 @@ void error_handler(int, int);
 void response_file(int, const char*); 
 
 //初始化web服务器 
-void initialize_server(); 
+int initialize_server(); 
 
 //获取请求的一行，第一个参数是客户端socketid，第二个参数是存放请求的字符串数组 
 int get_request_line(int, char*);

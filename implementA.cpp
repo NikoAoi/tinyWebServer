@@ -76,16 +76,14 @@ void execute_cgi(int clientfd, const char *request_method, const char *query_str
 } 
 
 //用于初始化web服务器 
-void initialize_server(){
+int initialize_server(){
 	int serverfd;
 	struct sockaddr_in listen_addr;
-
 	serverfd = socket(PF_INET, SOCK_STREAM, 0);
 	if(serverfd < 0){
 		fprintf(stderr, "get socketfd error!\n");
 		exit(1);
 	}
-
 	memset(&listen_addr, 0, sizeof(struct sockaddr_in));
 	listen_addr.sin_family = AF_INET;
 	listen_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -94,8 +92,8 @@ void initialize_server(){
 		fprintf(stderr, "bind error!\n");
 		exit(2);
 	}
-
 	listen(serverfd, 5);
+	return serverfd;
 }
 
 //用于获取请求的一行 
@@ -116,10 +114,19 @@ int get_request_line(int socketfd, char* buf){
 		}
 	} 
 	buf[i] = '\0';
-    return(i);
+    return i;
 }
 
 int main(void){
-	
+	int serverfd, clientfd;
+	pthread_t t1;
+	struct sockaddr_in client_addr;
+	serverfd = initialize_server();
+	while(1){
+		clientfd = accept(serverfd, (struct sockaddr *)&client_addr, &(sizeof(client_addr)));
+		pthread_create(&t1 , NULL, request_handler, clientfd);
+	}
+	close(serverfd);
+    return 0;
 }
 
