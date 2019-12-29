@@ -19,7 +19,6 @@
 #define REQUEST_ERROR 3
 #define REQUEST_METHOD_ERROR 4
 
-#define SOCKET_RECEIVE_ERROR -1
 #define LISTEN_PORT 8089 
 
 #define SERVER_INFO "Server: tiny_web_server/1.1.0\r\n"
@@ -36,8 +35,17 @@ void response_file(int, const char*);
 //初始化web服务器 
 void initialize_server(); 
 
-//获取请求的一行 
-int get_request_line(int, char*); 
+//获取请求的一行，第一个参数是客户端socketid，第二个参数是存放请求的字符串数组 
+int get_request_line(int, char*);
+
+//清空请求，传入参数：客户端socketid 
+void fresh_request(int); 
 
 //用于设置执行cgi程序的环境 
-void execute_cgi(int, const char *,const char *,const char *); 
+void execute_cgi(int, const char *,const char *,const char *);
+
+//建立cgi程序管道，第一个参数是输入管道指针，第二个参数是输出管道指针 
+void create_cgi_pipe(int *pipe_in, int *pipe_out); 
+
+//关闭所有的cgi管道 
+void close_all_cgi_pipe(int *pipe_in, int *pipe_out);
