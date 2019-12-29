@@ -24,17 +24,17 @@ void initialize_server(){
 }
 
 //用于获取请求的一行 
-int get_request_line(int sockfd, char* buf){
+int get_request_line(int socketfd, char* buf){
 	int buf_size = sizeof(buf), num, i;
 	char ch = '\0';
 	for(int= 0; i < buf_size && ch != '\n'; i++){
-		num = recv(sockfd, &ch, 1, 0);
-		error_handler(num);
+		num = recv(socketfd, &ch, 1, 0);
+		error_handler(socketfd, num);
 		if(num == 0) ch = '\n';
 		else {
 			if(ch == '\r'){
-				num = recv(sockfd, &ch, 1, MSG_PEEK);
-                if ((num > 0) && (ch == '\n')) recv(sockfd, &ch, 1, 0);
+				num = recv(socketfd, &ch, 1, MSG_PEEK);
+                if ((num > 0) && (ch == '\n')) recv(socketfd, &ch, 1, 0);
 				else ch = '\n';
 			}
 			buf[i] = ch;

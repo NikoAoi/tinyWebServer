@@ -24,14 +24,20 @@
 
 #define SERVER_INFO "Server: tiny_web_server/1.1.0\r\n"
 
+//请求处理器，传入参数：客户端socketid 
 void request_handler(int); 
-         
+
+//错误处理器，传入参数：客户端socketid，错误类型         
 void error_handler(int, int); 
 
+//用于直接返回文件资源，传入参数：客户端socketid，文件名 
 void response_file(int, const char*); 
 
+//初始化web服务器 
 void initialize_server(); 
 
+//获取请求的一行 
 int get_request_line(int, char*); 
 
+//用于设置执行cgi程序的环境 
 void execute_cgi(int, const char *,const char *,const char *); 
