@@ -32,14 +32,14 @@ int get_request_line(int sock, char* buf){
 	for(int i = 0; i < buf_size && ch != '\n'; i++){
 		n = recv(sock, &ch, 1, 0);
 		if(n > 0){
-			if(c == '\r'){
+			if(ch == '\r'){
 				n = recv(sock, &ch, 1, MSG_PEEK);
                 if ((n > 0) && (ch == '\n')) recv(sock, &ch, 1, 0);
 				else ch = '\n';
 				buf[i] = ch;
 			}
 		}
-		else c = '\n';
+		else ch = '\n';
 	} 
 	buf[i] = '\0';
     return(i);
