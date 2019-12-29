@@ -26,7 +26,7 @@
 
 void request_handler(int); 
          
-void error_handler(int); 
+void error_handler(int, int); 
 
 void response_file(int, const char*); 
 
