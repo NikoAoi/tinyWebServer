@@ -95,5 +95,19 @@ void error_handler(int request, int error_type){//错误处理函数
 		send(request,buf,strlen(buf),0);
 		sprintf(buf, "<P>Request error,The current request is not understood by the Server.\r\n");  
 		send(request,buf,strlen(buf),0);
+	}else if(error_type==4){//请求方法有误，服务器无法识别，REQUEST_METHOD_ERROR
+		sprintf(buf, "HTTP/1.0 501 Not Implemented\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf,SERVER_INFO);
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "Content-Type: text/html\r\n\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "<HTML><TITLE>Method Not Implemented</TITLE>\r\n");  
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "<P>The request method is incorrect and the server cannot recognize it.\r\n</HTML>");  
+		send(request,buf,strlen(buf),0);
+	}else{
+		sprintf(buf, "<P>The error_type is wrong.");
+		send(request,buf,strlen(buf),0);
 	}
 }
