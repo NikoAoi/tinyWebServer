@@ -2,11 +2,11 @@
 void create_cgi_pipe(int clientfd, int* pipe_in, int* pipe_out){
 	if (pipe(pipe_in) < 0) {
 		error_handler(clientfd, CGI_ERROR);
-		exit(1);
+		return;
 	}
 	if (pipe(pipe_out) < 0) {
 		error_handler(clientfd, CGI_ERROR);
-		exit(1);
+		return;
 	}
 }
 
@@ -36,7 +36,7 @@ void execute_cgi(int clientfd, const char *request_method, const char *query_str
 		}
 		if(content_length == -1) {
 			error_handler(clientfd, REQUEST_ERROR);
-			exit(1);
+			return;
 		}
 	}
 	sprintf(buffer, "HTTP/1.0 200 OK\r\n");
@@ -71,7 +71,7 @@ void execute_cgi(int clientfd, const char *request_method, const char *query_str
 		close(pipe_in[1]);
 		close(pipe_out[0]);
 		execl(cgi_path, cgi_path, NULL);
-		exit(0);
+		return;
 	}
 } 
 

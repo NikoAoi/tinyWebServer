@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #define isSpace(x) isspace((int)(x))
 

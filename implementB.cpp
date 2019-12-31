@@ -15,7 +15,7 @@ void *request_handler(void* re){//用于处理请求
 	if(strcasecmp(method,"POST")&&strcasecmp(method,"GET")){
 		//请求不是GET或POST则返回
 		error_handler(request,REQUEST_METHOD_ERROR);
-		exit(1);
+		return (void*)NULL;
 	}
 	if(strcasecmp(method,"POST")==0){
 		//当请求为POST时开启pipe
