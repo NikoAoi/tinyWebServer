@@ -5,8 +5,8 @@ int main(void){
 	struct sockaddr_in client_addr;
 	serverfd = initialize_server();
 	while(1){
-		clientfd = accept(serverfd, (struct sockaddr *)&client_addr, &(sizeof(client_addr)));
-		pthread_create(&t1 , NULL, request_handler, clientfd);
+		clientfd = accept(serverfd, (struct sockaddr *)&client_addr, &(sizeof(client_addr));
+		pthread_create(&t1 , NULL, request_handler, (void*)&clientfd);
 	}
 	close(serverfd);
     return 0;
