@@ -24,7 +24,7 @@
 #define SERVER_INFO "Server: tiny_web_server/1.1.0\r\n"
 
 //请求处理器，传入参数：客户端socketid 
-void request_handler(int); 
+void* request_handler(void*); 
 
 //错误处理器，传入参数：客户端socketid，错误类型         
 void error_handler(int, int); 
@@ -45,7 +45,7 @@ void fresh_request(int);
 void execute_cgi(int, const char *,const char *,const char *);
 
 //建立cgi程序管道，第一个参数是输入管道指针，第二个参数是输出管道指针 
-void create_cgi_pipe(int *pipe_in, int *pipe_out); 
+void create_cgi_pipe(int, int *, int *); 
 
 //关闭所有的cgi管道 
-void close_all_cgi_pipe(int *pipe_in, int *pipe_out);
+void close_all_cgi_pipe(int *, int *);

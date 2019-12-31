@@ -1,13 +1,13 @@
 #include "header.h" 
 void create_cgi_pipe(int clientfd, int* pipe_in, int* pipe_out){
-	if (pipe(pope_in) < 0) {
-        error_handler(clientfd, CGI_ERROR);
-        exit(1);
-    }
-    if (pipe(cgi_input) < 0) {
-        error_handler(clientfd, CGI_ERROR);
-        exit(1);
-    }
+	if (pipe(pipe_in) < 0) {
+		error_handler(clientfd, CGI_ERROR);
+		exit(1);
+	}
+	if (pipe(pipe_out) < 0) {
+		error_handler(clientfd, CGI_ERROR);
+		exit(1);
+	}
 }
 
 void close_all_cgi_pipe(int *pipe_in, int *pipe_out){
@@ -40,19 +40,19 @@ void execute_cgi(int clientfd, const char *request_method, const char *query_str
 		}
 	}
 	sprintf(buffer, "HTTP/1.0 200 OK\r\n");
-    send(clientfd, buffer, strlen(buffer), 0);
-    create_cgi_pipe(int clientfd, pipe_in, pipe_out)
-    if((pid = fork()) != 0){
-    	char ch;
-    	int status;
-    	if(!isGet){
-    		for(int i = 0; i < content_length; i++){
-    			recv(clientfd, &ch, 1, 0);
-                write(pipe_in[1], &ch, 1);
+	send(clientfd, buffer, strlen(buffer), 0);
+	create_cgi_pipe(clientfd, pipe_in, pipe_out);
+	if((pid = fork()) != 0){
+		char ch;
+		int status;
+		if(!isGet){
+			for(int i = 0; i < content_length; i++){
+				recv(clientfd, &ch, 1, 0);
+				write(pipe_in[1], &ch, 1);
 			}
 		}
 		while (read(pipe_out[0], &ch, 1) > 0) send(clientfd, &ch, 1, 0);
-		close_all_cgi_pipe(pipe_in, pipe[out]);
+		close_all_cgi_pipe(pipe_in, pipe_out);
 		waitpid(pid, &status, 0);
 	}
 	else{
@@ -60,18 +60,18 @@ void execute_cgi(int clientfd, const char *request_method, const char *query_str
 		dup2(pipe_out[1], 1);
 		if(isGet){
 			sprintf(query, "QUERY_STRING=%s", query_string);
-            putenv(query);
+			putenv(query);
 		}
 		else{
 			sprintf(length, "CONTENT_LENGTH=%d", content_length);
-            putenv(length);
+			putenv(length);
 		}
 		sprintf(method, "REQUEST_METHOD=%s", request_method);
-        putenv(method);
-        close(pipe_in[1]);
-        close(pipe_out[0]);
-    	execl(cgi_path, cgi_path, NULL);
-        exit(0);
+		putenv(method);
+		close(pipe_in[1]);
+		close(pipe_out[0]);
+		execl(cgi_path, cgi_path, NULL);
+		exit(0);
 	}
 } 
 
@@ -88,7 +88,7 @@ int initialize_server(){
 	listen_addr.sin_family = AF_INET;
 	listen_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	listen_addr.sin_port = htons(LISTEN_PORT);
-	if(bind(serverfd, &listen_addr, sizeof(struct sockaddr_in)) < 0){
+	if(bind(serverfd, (struct sockaddr*)&listen_addr, sizeof(listen_addr)) < 0){
 		fprintf(stderr, "bind error!\n");
 		exit(2);
 	}
@@ -107,14 +107,14 @@ int get_request_line(int socketfd, char* buf){
 		else {
 			if(ch == '\r'){
 				num = recv(socketfd, &ch, 1, MSG_PEEK);
-                if ((num > 0) && (ch == '\n')) recv(socketfd, &ch, 1, 0);
+				if ((num > 0) && (ch == '\n')) recv(socketfd, &ch, 1, 0);
 				else ch = '\n';
 			}
 			buf[i] = ch;
 		}
 	} 
 	buf[i] = '\0';
-    return i;
+	return i;
 }
 
 

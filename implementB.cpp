@@ -1,5 +1,6 @@
 #include "header.h" 
-void request_handler(int request){//用于处理请求
+void *request_handler(void* re){//用于处理请求
+	int request = *((int*)re);
 	int m=0,n=0,pipe=0,num;
 	char method[512],buf[1024],link[512],path[512];
 	char *request_str=NULL;
@@ -14,14 +15,14 @@ void request_handler(int request){//用于处理请求
 	if(strcasecmp(method,"POST")&&strcasecmp(method,"GET")){
 		//请求不是GET或POST则返回
 		error_handler(request,REQUEST_METHOD_ERROR);
-		return;
+		exit(1);
 	}
 	if(strcasecmp(method,"POST")==0){
 		//当请求为POST时开启pipe
 		pipe=1;
 	}
 	while(isSpace(buf[n])&&(n<sizeof(buf))){
-		n++
+		n++;
 	}
 	m=0;
 	while(!isSpace(buf[n])&&(m<sizeof(link)-1)&&(n<sizeof(buf))){
@@ -112,7 +113,7 @@ void error_handler(int request, int error_type){//错误处理函数
 	}
 }
 void response_file(int request,const char* filename){
-	char buf[1024];
+	char buf[1024], buf1[1024], buf2[1024];
 	int num=1;
 	FILE *file=NULL;
 	buf[0]='A';
@@ -123,18 +124,18 @@ void response_file(int request,const char* filename){
 	file=fopen(filename,"r");
 	if(file==NULL)	error_handler(request,PAGE_NOT_FOUND);
 	else{
-		sprintf(buf,"");
-		strcpy(buf,"HTTP/1.0 200 OK\r\n");//200请求成功
-		send(request,buf,strlen(buf),0);
-		sprintf(buf,SERVER_INFO);
-		send(request,buf,strlen(buf),0);
-		sprintf(buf, "Content-Type: text/html\r\n\r\n");
-		send(request,buf,strlen(buf),0);
-		sprintf(buf,"");
-		fgets(buf,sizeof(buf),file);
+		//sprintf(buf,"");
+		strcpy(buf1,"HTTP/1.0 200 OK\r\n");//200请求成功
+		send(request,buf1,strlen(buf1),0);
+		sprintf(buf1,SERVER_INFO);
+		send(request,buf1,strlen(buf1),0);
+		sprintf(buf1, "Content-Type: text/html\r\n\r\n");
+		send(request,buf1,strlen(buf1),0);
+		//sprintf(buf1,"");
+		fgets(buf2,sizeof(buf2),file);
 		while(!feof(file)){
-			send(request,buf,strlen(buf),0);
-			fgets(buf,sizeof(buf),file);
+			send(request,buf2,strlen(buf2),0);
+			fgets(buf2,sizeof(buf2),file);
 		}
 	}
 	fclose(file);
