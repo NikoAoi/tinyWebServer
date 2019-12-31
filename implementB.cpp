@@ -111,3 +111,31 @@ void error_handler(int request, int error_type){//错误处理函数
 		send(request,buf,strlen(buf),0);
 	}
 }
+void response_file(int request,const char* filename){
+	char buf[1024];
+	int num=1;
+	FILE *file=NULL;
+	buf[0]='A';
+	buf[1]='\0';
+	while((num>0)&&strcmp("\n",buf)){
+		num=get_request_line(request,buf);
+	}
+	file=fopen(filename,"r");
+	if(file==NULL)	error_handler(request,PAGE_NOT_FOUND);
+	else{
+		sprintf(buf,"");
+		strcpy(buf,"HTTP/1.0 200 OK\r\n");//200请求成功
+		send(request,buf,strlen(buf),0);
+		sprintf(buf,SERVER_INFO);
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "Content-Type: text/html\r\n\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf,"");
+		fgets(buf,sizeof(buf),file);
+		while(!feof(file)){
+			send(request,buf,strlen(buf),0);
+			fgets(buf,sizeof(buf),file);
+		}
+	}
+	fclose(file);
+}
