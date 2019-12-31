@@ -13,7 +13,7 @@ void request_handler(int request){//用于处理请求
 	method[m]='\0';
 	if(strcasecmp(method,"POST")&&strcasecmp(method,"GET")){
 		//请求不是GET或POST则返回
-		unimplement(request);
+		error_handler(request,4);
 		return;
 	}
 	if(strcasecmp(method,"POST")==0){
@@ -50,7 +50,7 @@ void request_handler(int request){//用于处理请求
 		while((num>0)&&strcmp("\n",buf)){
 			num=get_request_line(request,buf);
 		}
-		not_found(request);//回应找不到
+		error_handler(request,1);
 	}else{
 		if((sta.st_mode&S_IFMT)==S_IFDIR){
 			strcat(path,"index.html");
@@ -66,3 +66,20 @@ void request_handler(int request){//用于处理请求
 	}
 	close(request);
 } 
+void error_handler(int request, int error_type){//错误处理函数
+	char buf[1024];
+	if(error_type==1){//页面找不到,404
+		sprintf(buf,"HTTP/1.0 404 NOT FOUND\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf,SERVER_INFO);
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "Content-Type: text/html\r\n\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "<HTML><TITLE>404 Not Found</TITLE>\r\n");  
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "<BODY><P>Unable to access this site\r\nBecause the server can not work correctly\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf,"or the resource you requested is invalid or nonexistent\r\n</BODY></HTML>\r\n");
+		send(request,buf,strlen(buf),0);
+	}
+}
