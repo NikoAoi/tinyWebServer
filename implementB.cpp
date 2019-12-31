@@ -13,7 +13,7 @@ void request_handler(int request){//用于处理请求
 	method[m]='\0';
 	if(strcasecmp(method,"POST")&&strcasecmp(method,"GET")){
 		//请求不是GET或POST则返回
-		error_handler(request,4);
+		error_handler(request,REQUEST_METHOD_ERROR);
 		return;
 	}
 	if(strcasecmp(method,"POST")==0){
@@ -50,7 +50,7 @@ void request_handler(int request){//用于处理请求
 		while((num>0)&&strcmp("\n",buf)){
 			num=get_request_line(request,buf);
 		}
-		error_handler(request,1);
+		error_handler(request,PAGE_NOT_FOUND);
 	}else{
 		if((sta.st_mode&S_IFMT)==S_IFDIR){
 			strcat(path,"index.html");
@@ -68,7 +68,7 @@ void request_handler(int request){//用于处理请求
 } 
 void error_handler(int request, int error_type){//错误处理函数
 	char buf[1024];
-	if(error_type==1){//页面找不到,404
+	if(error_type==PAGE_NOT_FOUND){//页面找不到,404
 		sprintf(buf,"HTTP/1.0 404 NOT FOUND\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf,SERVER_INFO);
@@ -81,21 +81,21 @@ void error_handler(int request, int error_type){//错误处理函数
 		send(request,buf,strlen(buf),0);
 		sprintf(buf,"or the resource you requested is invalid or nonexistent\r\n</BODY></HTML>\r\n");
 		send(request,buf,strlen(buf),0);
-	}else if(error_type==2){//不能正常执行，CGI_ERROR
+	}else if(error_type==CGI_ERROR){//不能正常执行，CGI_ERROR
 		sprintf(buf,"HTTP/1.0 500 Internal Server Error\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf, "Content-Type: text/html\r\n\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf, "<P>CGI execution error.\r\n");
 		send(request,buf,strlen(buf),0);
-	}else if(error_type==3){//语义有误，服务器无法理解，REQUEST_ERROR
+	}else if(error_type==REQUEST_ERROR){//语义有误，服务器无法理解，REQUEST_ERROR
 		sprintf(buf,"HTTP/1.0 400 REQUEST ERROR\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf, "Content-Type: text/html\r\n\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf, "<P>Request error,The current request is not understood by the Server.\r\n");  
 		send(request,buf,strlen(buf),0);
-	}else if(error_type==4){//请求方法有误，服务器无法识别，REQUEST_METHOD_ERROR
+	}else if(error_type==REQUEST_METHOD_ERROR){//请求方法有误，服务器无法识别，REQUEST_METHOD_ERROR
 		sprintf(buf, "HTTP/1.0 501 Not Implemented\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf,SERVER_INFO);
