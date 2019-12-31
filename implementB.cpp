@@ -42,7 +42,7 @@ void request_handler(int request){//用于处理请求
 			request_str++;
 		}
 	}
-	sprintf(path,"htdocs%s",link);
+	sprintf(path,"resources%s",link);
 	if(path[strlen(path)-1]=='/'){
 		strcat(path,"index.html");//拼接路径
 	}
