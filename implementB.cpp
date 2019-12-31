@@ -68,7 +68,7 @@ void request_handler(int request){//用于处理请求
 } 
 void error_handler(int request, int error_type){//错误处理函数
 	char buf[1024];
-	if(error_type==1){//页面找不到,404
+	if(error_type==1){//页面找不到,404 PAGE_NOT_FOUND 
 		sprintf(buf,"HTTP/1.0 404 NOT FOUND\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf,SERVER_INFO);
@@ -80,6 +80,13 @@ void error_handler(int request, int error_type){//错误处理函数
 		sprintf(buf, "<BODY><P>Unable to access this site\r\nBecause the server can not work correctly\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf,"or the resource you requested is invalid or nonexistent\r\n</BODY></HTML>\r\n");
+		send(request,buf,strlen(buf),0);
+	}else if(error_type==2){//不能正常执行，CGI_ERROR
+		sprintf(buf,"HTTP/1.0 500 Internal Server Error\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "Content-Type: text/html\r\n\r\n");
+		send(request,buf,strlen(buf),0);
+		sprintf(buf, "<P>CGI execution error.\r\n");
 		send(request,buf,strlen(buf),0);
 	}
 }
