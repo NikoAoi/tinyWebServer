@@ -18,9 +18,7 @@
 #define PAGE_NOT_FOUND 1
 #define CGI_ERROR 2
 #define REQUEST_ERROR 3
-#define REQUEST_METHOD_ERROR 4
-
-#define LISTEN_PORT 37581 
+#define REQUEST_METHOD_ERROR 4 
 
 #define SERVER_INFO "Server: tiny_web_server/1.1.0\r\n"
 
@@ -34,7 +32,7 @@ void error_handler(int, int);
 void response_file(int, const char*); 
 
 //初始化web服务器 
-int initialize_server(); 
+int initialize_server(u_short* port); 
 
 //获取请求的一行，第一个参数是客户端socketid，第二个参数是存放请求的字符串数组 
 int get_request_line(int, char*, int);

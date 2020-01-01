@@ -62,7 +62,7 @@ void *request_handler(void* re){//用于处理请求
 		if(!pipe){
 			response_file(request,path);
 		}else{
-			execute_cgi(request,path,method,request_str);
+			execute_cgi(request,method,request_str,path);
 		}
 	}
 	close(request);
