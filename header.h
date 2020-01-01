@@ -37,7 +37,7 @@ void response_file(int, const char*);
 int initialize_server(); 
 
 //获取请求的一行，第一个参数是客户端socketid，第二个参数是存放请求的字符串数组 
-int get_request_line(int, char*);
+int get_request_line(int, char*, int);
 
 //清空请求，传入参数：客户端socketid 
 void fresh_request(int); 

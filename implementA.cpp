@@ -19,7 +19,7 @@ void close_all_cgi_pipe(int *pipe_in, int *pipe_out){
 
 void fresh_request(int clientfd){
 	char buffer[2048];
-	while((get_request_line(clientfd, buffer)) > 0 && strcmp(buffer, "\n") != 0);
+	while((get_request_line(clientfd, buffer, sizeof(buffer)) > 0 && strcmp(buffer, "\n") != 0);
 }
 
 void execute_cgi(int clientfd, const char *request_method, const char *query_string, const char *cgi_path){
@@ -30,7 +30,7 @@ void execute_cgi(int clientfd, const char *request_method, const char *query_str
 	if(strcasecmp(request_method, "GET") == 0) isGet = 1;
 	if(isGet) fresh_request(clientfd);
 	else{
-		while((get_request_line(clientfd, buffer)) > 0 && strcmp(buffer, "\n") != 0){
+		while((get_request_line(clientfd, buffer, sizeof(buffer)) > 0 && strcmp(buffer, "\n") != 0){
 			buffer[15] = '\0';
 			if(!strcasecmp("content-length:", buffer)) content_length = atoi(&buffer[16]);
 		}
@@ -97,24 +97,31 @@ int initialize_server(){
 }
 
 //用于获取请求的一行 
-int get_request_line(int socketfd, char* buf){
-	int buf_size = sizeof(buf), num, i;
-	char ch = '\0';
-	for(i = 0; i < buf_size && ch != '\n'; i++){
-		num = recv(socketfd, &ch, 1, 0);
-		if(num < 0) fprintf(stderr, "socket receive error!\n");
-		if(num == 0) ch = '\n';
-		else {
-			if(ch == '\r'){
-				num = recv(socketfd, &ch, 1, MSG_PEEK);
-				if ((num > 0) && (ch == '\n')) recv(socketfd, &ch, 1, 0);
-				else ch = '\n';
-			}
-			buf[i] = ch;
-		}
-	} 
-	buf[i] = '\0';
-	return i;
+int get_request_line(int sock, char* buf, int size){
+    int i = 0;
+    char c = '\0';
+    int n;
+    while ((i < size - 1) && (c != '\n'))
+    {
+        n = recv(sock, &c, 1, 0);
+        if (n > 0)
+        {
+            if (c == '\r')
+            {
+                n = recv(sock, &c, 1, MSG_PEEK);
+                if ((n > 0) && (c == '\n'))
+                    recv(sock, &c, 1, 0);
+                else
+                    c = '\n';
+            }
+            buf[i] = c;
+            i++;
+        }
+        else
+            c = '\n';
+    }
+    buf[i] = '\0';
+    return(i);
 }
 
 

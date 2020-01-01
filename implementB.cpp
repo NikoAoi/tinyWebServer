@@ -5,7 +5,7 @@ void *request_handler(void* re){//用于处理请求
 	char method[512],buf[1024],link[512],path[512];
 	char *request_str=NULL;
 	struct stat sta;
-	num=get_request_line(request,buf);
+	num=get_request_line(request,buf,sizeof(buf));
 	while(!isSpace(buf[n])&&(m<sizeof(method)-1)){
 		method[m]=buf[n];//将请求方法存到method中
 		m++;
@@ -49,7 +49,7 @@ void *request_handler(void* re){//用于处理请求
 	}
 	if(stat(path,&sta)==-1){
 		while((num>0)&&strcmp("\n",buf)){
-			num=get_request_line(request,buf);
+			num=get_request_line(request,buf,sizeof(buf));
 		}
 		error_handler(request,PAGE_NOT_FOUND);
 	}else{
@@ -119,7 +119,7 @@ void response_file(int request,const char* filename){
 	buf[0]='A';
 	buf[1]='\0';
 	while((num>0)&&strcmp("\n",buf)){
-		num=get_request_line(request,buf);
+		num=get_request_line(request,buf,sizeof(buf));
 	}
 	file=fopen(filename,"r");
 	if(file==NULL)	error_handler(request,PAGE_NOT_FOUND);
