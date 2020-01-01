@@ -78,7 +78,7 @@ void error_handler(int request, int error_type){//错误处理函数
 		send(request,buf,strlen(buf),0);
 		sprintf(buf, "<HTML><TITLE>404 Not Found</TITLE>\r\n");  
 		send(request,buf,strlen(buf),0);
-		sprintf(buf, "<BODY><P>Unable to access this site\r\nBecause the server can not work correctly\r\n");
+		sprintf(buf, "<BODY><h1>404 NOT FOUND</h1><P>Unable to access this site\r\nBecause the our's tinyWebServer can not work correctly\r\n");
 		send(request,buf,strlen(buf),0);
 		sprintf(buf,"or the resource you requested is invalid or nonexistent\r\n</BODY></HTML>\r\n");
 		send(request,buf,strlen(buf),0);
