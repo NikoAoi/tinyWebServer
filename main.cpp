@@ -11,7 +11,7 @@ int main(void){
 	pthread_t t1;
 	struct sockaddr_in client_addr;
 	serverfd = initialize_server(&port);
-	printf("httpd running on port %d\n", port);
+	printf("Hi!, Your tinyWebServer running on port %d\n", port);
 	int length = sizeof(client_addr);
 	signal(SIGINT,closeSocket);
 	while(1){
